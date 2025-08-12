@@ -82,176 +82,129 @@
 ////}
 ////
 //
-//-------------------------- sparse matrix operations --------------------------//
+
+
+//
+//
 //#include <iostream>
+//#include <cstring>  // For strcat, strcpy, strcmp, strlen
+//#include <cctype>   // For tolower
 //using namespace std;
 //
-//struct Triple {
-//    int row, col, val;
-//};
+//// (a) Concatenate two strings
+//void concatenateStrings() {
+//    char str1[100], str2[50];
+//    cout << "Enter first string: ";
+//    cin >> str1;
+//    cout << "Enter second string: ";
+//    cin >> str2;
 //
-//// ----------------------
-//// (a) Transpose Function
-//// ----------------------
-//void transpose(Triple mat[], Triple trans[]) {
-//    // First row: swap rows & columns
-//    trans[0].row = mat[0].col;
-//    trans[0].col = mat[0].row;
-//    trans[0].val = mat[0].val;
+//    strcat(str1, str2); // Append str2 to str1
+//    cout << "Concatenated string: " << str1 << endl;
+//}
 //
-//    int k = 1;
-//    // Go column by column in original
-//    for (int i = 0; i < mat[0].col; i++) {
-//        for (int j = 1; j <= mat[0].val; j++) {
-//            if (mat[j].col == i) {
-//                trans[k].row = mat[j].col;
-//                trans[k].col = mat[j].row;
-//                trans[k].val = mat[j].val;
-//                k++;
+//// (b) Reverse a string
+//void reverseString() {
+//    char str[100];
+//    cout << "Enter a string: ";
+//    cin >> str;
+//
+//    int len = strlen(str);
+//    for (int i = 0; i < len / 2; i++) {
+//        char temp = str[i];
+//        str[i] = str[len - i - 1];
+//        str[len - i - 1] = temp;
+//    }
+//    cout << "Reversed string: " << str << endl;
+//}
+//
+//// (c) Delete all vowels from string
+//void deleteVowels() {
+//    char str[100], result[100];
+//    cout << "Enter a string: ";
+//    cin >> str;
+//
+//    int j = 0;
+//    for (int i = 0; str[i] != '\0'; i++) {
+//        char ch = tolower(str[i]);
+//        if (ch != 'a' && ch != 'e' && ch != 'i' && ch != 'o' && ch != 'u') {
+//            result[j++] = str[i];
+//        }
+//    }
+//    result[j] = '\0';
+//    cout << "String without vowels: " << result << endl;
+//}
+//
+//// (d) Sort strings in alphabetical order
+//void sortStrings() {
+//    int n;
+//    char str[50][50];
+//    cout << "Enter number of strings: ";
+//    cin >> n;
+//
+//    cout << "Enter strings:\n";
+//    for (int i = 0; i < n; i++) {
+//        cin >> str[i];
+//    }
+//
+//    for (int i = 0; i < n - 1; i++) {
+//        for (int j = i + 1; j < n; j++) {
+//            if (strcmp(str[i], str[j]) > 0) { // Compare alphabetically
+//                char temp[50];
+//                strcpy(temp, str[i]);
+//                strcpy(str[i], str[j]);
+//                strcpy(str[j], temp);
 //            }
 //        }
 //    }
+//
+//    cout << "Sorted strings:\n";
+//    for (int i = 0; i < n; i++) {
+//        cout << str[i] << endl;
+//    }
 //}
 //
-//// ----------------------
-//// (b) Addition Function
-//// ----------------------
-//void addSparse(Triple mat1[], Triple mat2[], Triple sum[]) {
-//    if (mat1[0].row != mat2[0].row || mat1[0].col != mat2[0].col) {
-//        cout << "Addition not possible: different dimensions!" << endl;
-//        return;
-//    }
+//// (e) Convert a character from uppercase to lowercase
+//void convertUpperToLower() {
+//    char ch;
+//    cout << "Enter an uppercase character: ";
+//    cin >> ch;
 //
-//    int n1 = mat1[0].val;
-//    int n2 = mat2[0].val;
-//    int i = 1, j = 1, k = 1;
-//
-//    sum[0].row = mat1[0].row;
-//    sum[0].col = mat1[0].col;
-//
-//    while (i <= n1 && j <= n2) {
-//        if (mat1[i].row < mat2[j].row || (mat1[i].row == mat2[j].row && mat1[i].col < mat2[j].col)) {
-//            sum[k++] = mat1[i++];
-//        }
-//        else if (mat2[j].row < mat1[i].row || (mat2[j].row == mat1[i].row && mat2[j].col < mat1[i].col)) {
-//            sum[k++] = mat2[j++];
-//        }
-//        else { // same position
-//            int value = mat1[i].val + mat2[j].val;
-//            if (value != 0) {
-//                sum[k].row = mat1[i].row;
-//                sum[k].col = mat1[i].col;
-//                sum[k].val = value;
-//                k++;
-//            }
-//            i++;
-//            j++;
-//        }
-//    }
-//
-//    while (i <= n1) sum[k++] = mat1[i++];
-//    while (j <= n2) sum[k++] = mat2[j++];
-//
-//    sum[0].val = k - 1; // store number of non-zero elements
+//    ch = tolower(ch); // Convert to lowercase
+//    cout << "Lowercase character: " << ch << endl;
 //}
 //
-//// ----------------------
-//// (c) Multiplication Function
-//// ----------------------
-//void multiplySparse(Triple mat1[], Triple mat2[], Triple result[]) {
-//    if (mat1[0].col != mat2[0].row) {
-//        cout << "Multiplication not possible: incompatible dimensions!" << endl;
-//        return;
-//    }
-//
-//    Triple transB[100];
-//    transpose(mat2, transB); // transpose B for easier matching
-//
-//    int k = 1;
-//    result[0].row = mat1[0].row;
-//    result[0].col = mat2[0].col;
-//
-//    for (int i = 0; i < mat1[0].row; i++) {
-//        for (int j = 0; j < transB[0].row; j++) {
-//            int sumVal = 0;
-//            for (int a = 1; a <= mat1[0].val; a++) {
-//                if (mat1[a].row != i) continue;
-//                for (int b = 1; b <= transB[0].val; b++) {
-//                    if (transB[b].row != j) continue;
-//                    if (mat1[a].col == transB[b].col) {
-//                        sumVal += mat1[a].val * transB[b].val;
-//                    }
-//                }
-//            }
-//            if (sumVal != 0) {
-//                result[k].row = i;
-//                result[k].col = j;
-//                result[k].val = sumVal;
-//                k++;
-//            }
-//        }
-//    }
-//    result[0].val = k - 1;
-//}
-//
-//// ----------------------
-//// Print Function
-//// ----------------------
-//void printSparse(Triple mat[]) {
-//    for (int i = 0; i <= mat[0].val; i++) {
-//        cout << mat[i].row << " " << mat[i].col << " " << mat[i].val << endl;
-//    }
-//    cout << endl;
-//}
-//
-//// ----------------------
-//// Main Program
-//// ----------------------
+//// Main menu
 //int main() {
-//    Triple A[] = {
-//        {3, 3, 3}, // rows, cols, non-zeros
-//        {0, 0, 5},
-//        {1, 1, 8},
-//        {2, 2, 3}
-//    };
+//    int choice;
+//    do {
+//        cout << "\nString Operations Menu:\n";
+//        cout << "1. Concatenate Strings\n";
+//        cout << "2. Reverse String\n";
+//        cout << "3. Delete Vowels\n";
+//        cout << "4. Sort Strings Alphabetically\n";
+//        cout << "5. Convert Uppercase to Lowercase\n";
+//        cout << "0. Exit\n";
+//        cout << "Enter choice: ";
+//        cin >> choice;
 //
-//    Triple B[] = {
-//        {3, 3, 3},
-//        {0, 1, 4},
-//        {1, 2, 7},
-//        {2, 0, 6}
-//    };
-//
-//    cout << "Matrix A:" << endl;
-//    printSparse(A);
-//
-//    cout << "Matrix B:" << endl;
-//    printSparse(B);
-//
-//    // (a) Transpose
-//    Triple transA[100];
-//    transpose(A, transA);
-//    cout << "(a) Transpose of A:" << endl;
-//    printSparse(transA);
-//
-//    // (b) Addition
-//    Triple sum[100];
-//    addSparse(A, B, sum);
-//    cout << "(b) A + B:" << endl;
-//    printSparse(sum);
-//
-//    // (c) Multiplication
-//    Triple product[100];
-//    multiplySparse(A, B, product);
-//    cout << "(c) A × B:" << endl;
-//    printSparse(product);
+//        switch (choice) {
+//            case 1: concatenateStrings(); break;
+//            case 2: reverseString(); break;
+//            case 3: deleteVowels(); break;
+//            case 4: sortStrings(); break;
+//            case 5: convertUpperToLower(); break;
+//            case 0: cout << "Exiting...\n"; break;
+//            default: cout << "Invalid choice!\n";
+//        }
+//    } while (choice != 0);
 //
 //    return 0;
 //}
 //
-
-
-//#include <iostream>
+//
+//
+////#include <iostream>
 //using namespace std;
 //
 //int countInversions(int arr[], int n) {
